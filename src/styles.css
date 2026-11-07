@@ -83,3 +83,7 @@ footer p { margin: .2rem 0; }
 
 .promo-bar { background: var(--green); color: #fff; text-align: center; padding: .6rem 1rem; font-family: 'Trebuchet MS', system-ui, sans-serif; font-weight: 600; }
 .promo-line { color: var(--green); }
+
+.error { background: #fde8e6; color: #8a1c10; border: 1px solid #f3b7b0; padding: .6rem .8rem; border-radius: 10px; margin: .75rem 0 0; font-size: .92rem; }
+
+.stepup { background: #fff7e6; color: #3d2a05; border: 1px solid #f0c36d; border-radius: 8px; padding: .6rem .8rem; font-size: .9rem; margin: .75rem 0; }
