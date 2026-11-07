@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CartService } from './cart.service';
+import { MARKETING_DISCOUNT, MarketingService } from './marketing.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,10 @@ import { CartService } from './cart.service';
       </div>
     </header>
 
+    @if (marketing.optedIn()) {
+      <div class="promo-bar">🎉 You're signed up for our email specials, so enjoy {{ discountPct }}% off your order total!</div>
+    }
+
     <main><router-outlet /></main>
 
     <footer>
@@ -42,6 +47,8 @@ import { CartService } from './cart.service';
 export class AppComponent {
   auth = inject(AuthService);
   cart = inject(CartService);
+  marketing = inject(MarketingService);
+  discountPct = MARKETING_DISCOUNT * 100;
   isAuthenticated = toSignal(this.auth.isAuthenticated$, { initialValue: false });
   user = toSignal(this.auth.user$);
 

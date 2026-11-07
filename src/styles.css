@@ -71,3 +71,15 @@ footer p { margin: .2rem 0; }
   .hero, .layout { grid-template-columns: 1fr; }
   .cart { position: static; }
 }
+
+.promo { background: var(--ink); color: var(--cream); padding: .75rem 1rem; border-radius: 12px; margin-bottom: 1rem; }
+.promo code { background: var(--red); color: #fff; padding: .1rem .5rem; border-radius: 6px; }
+.profile.marketing { display: block; }
+
+.verify { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; background: #fff3cd; color: #5c4400; border: 1px solid #f0d78a; padding: .9rem 1.1rem; border-radius: 12px; margin-bottom: 1rem; }
+.verify p { margin: .25rem 0 0; font-size: .92rem; }
+.verify .btn { background: #5c4400; border-color: #5c4400; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.promo-bar { background: var(--green); color: #fff; text-align: center; padding: .6rem 1rem; font-family: 'Trebuchet MS', system-ui, sans-serif; font-weight: 600; }
+.promo-line { color: var(--green); }
