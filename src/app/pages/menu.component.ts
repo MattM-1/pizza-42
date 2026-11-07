@@ -6,6 +6,9 @@ import { AuthService } from '@auth0/auth0-angular';
 import { MARKETING_DISCOUNT, MarketingService } from '../marketing.service';
 import { CartService, MENU, Pizza, SIZE_LABEL, Size } from '../cart.service';
 
+const STEP_UP_THRESHOLD = 100; // orders over this amount (after discount) need MFA
+const MFA_ACR = 'http://schemas.openid.net/pape/policies/2007/06/multi-factor'; // must match the Auth0 Action
+
 @Component({
   selector: 'app-menu',
   standalone: true,
@@ -70,9 +73,12 @@ import { CartService, MENU, Pizza, SIZE_LABEL, Size } from '../cart.service';
             <div class="row between"><span>Subtotal</span><span>{{ cart.subtotal() | currency }}</span></div>
             <div class="row between promo-line"><span>Email subscriber (15% off)</span><span>−{{ discount() | currency }}</span></div>
           }
-          <div class="row between total"><span>Total</span><strong>{{ cart.subtotal() - discount() | currency }}</strong></div>
+          <div class="row between total"><span>Total</span><strong>{{ total() | currency }}</strong></div>
+          @if (needsStepUp() && !mfaDone()) {
+            <p class="muted">🔒 Orders over $100 need an extra security check before they can be placed.</p>
+          }
           <button class="btn full" [disabled]="isAuthenticated() && !emailVerified()" (click)="checkout()">
-            {{ !isAuthenticated() ? 'Log in to order' : emailVerified() ? 'Place order' : 'Verify email to order' }}
+            {{ !isAuthenticated() ? 'Log in to order' : !emailVerified() ? 'Verify email to order' : needsStepUp() && !mfaDone() ? 'Verify & place order' : 'Place order' }}
           </button>
         }
       </aside>
@@ -90,6 +96,16 @@ export class MenuComponent {
   checking = signal(false);
   rechecked = signal(false);
   discount = computed(() => (this.marketing.optedIn() ? this.cart.subtotal() * MARKETING_DISCOUNT : 0));
+  total = computed(() => this.cart.subtotal() - this.discount());
+
+  // Step-up: strictly over $100 after discount, compared in cents to avoid rounding quirks.
+  needsStepUp = computed(() => Math.round(this.total() * 100) > STEP_UP_THRESHOLD * 100);
+  private idClaims = toSignal(this.auth.idTokenClaims$);
+  // Auth0 adds amr: ["mfa"] to the ID token right after a successful MFA challenge.
+  mfaDone = computed(() => {
+    const amr = this.idClaims()?.['amr'];
+    return Array.isArray(amr) && amr.includes('mfa');
+  });
 
   menu = MENU;
   sizes: Size[] = ['S', 'M', 'L'];
@@ -122,6 +138,14 @@ export class MenuComponent {
     }
     // Email verification gate: browsing is open, ordering requires a verified email.
     if (!this.emailVerified()) return;
+    // Step-up: orders over $100 need MFA. The Auth0 Action sees acr_values and challenges the user.
+    if (this.needsStepUp() && !this.mfaDone()) {
+      this.auth.loginWithRedirect({
+        appState: { target: '/menu' },
+        authorizationParams: { acr_values: MFA_ACR },
+      });
+      return;
+    }
     // Proof of concept: no backend. A real app would POST the order with the access token.
     this.cart.clear();
     this.placed.set(true);
