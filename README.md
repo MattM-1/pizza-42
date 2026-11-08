@@ -26,6 +26,9 @@ npm install
 npm start     # http://localhost:4200
 ```
 
+`npm start` (`ng serve`) uses the **development** environment and calls a local API at `http://localhost:3001`.
+`ng build` uses the default environment and calls the hosted API. Both URLs live in `src/environments/`.
+
 ## What it shows
 - **Sign up** button → Auth0 Universal Login with `screen_hint: 'signup'`
 - **Log in / Log out** via `@auth0/auth0-angular`
