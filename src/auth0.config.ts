@@ -9,6 +9,6 @@ export const auth0Config = {
   apiUrl: 'http://localhost:3001',
   // Permissions requested for the access token (granted only if the user's role includes them).
   apiScope: 'create:orders read:orders',
-  // Must match NAMESPACE in auth0/post-login-marketing.js
+  // Must match the namespace used by the Auth0 post-login Actions (they live in the separate Auth0 tenant repo)
   claimsNamespace: 'https://pizza42.example.com/',
 };

@@ -22,7 +22,7 @@ npm start     # http://localhost:4200
 - Checkout requires login; the cart survives the redirect (sessionStorage)
 
 ## Marketing opt-in via Auth0 Form + Action
-`auth0/post-login-marketing.js` renders an Auth0 Form (opt in to marketing emails for 15% off, one yes/no question) on first login, stores the answer in
+A post-login Auth0 Action (kept in the separate Auth0 tenant repo) renders an Auth0 Form (opt in to marketing emails for 15% off, one yes/no question) on first login, stores the answer in
 `app_metadata.marketing_opt_in`, and adds `{ marketing_opt_in }` to the ID token. Opted-in users see a 15% off
 banner and the discount is applied to the cart total (`marketing.service.ts`).
 
