@@ -17,7 +17,9 @@ import { MarketingService } from '../marketing.service';
           <h3>{{ u.name }}</h3>
           <p>{{ u.email }}
             <span class="tag">{{ u.email_verified ? 'Verified' : 'Unverified' }}</span></p>
-          <p class="muted">Member of the Pizza 42 Dough Club 🍕</p>
+          @if (marketing.optedIn()) {
+            <p class="muted">Member of the Pizza 42 Dough Club 🍕</p>
+          }
         </div>
       </section>
       @if (marketing.data(); as m) {
