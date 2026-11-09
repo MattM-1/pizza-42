@@ -40,7 +40,7 @@ sequenceDiagram
   participant API as Pizza 42 API
   participant A as Auth0
   B->>API: POST /orders (Bearer token)
-  API->>API: Verify token, scope, verified email; price the order
+  API->>API: Verify token, scope and verified email, then price the order
   alt total is $100 or less, or token has create:large-orders
     API-->>B: 201 order created
   else over $100 without the scope
