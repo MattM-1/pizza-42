@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '@auth0/auth0-angular';
 import { MarketingService } from '../marketing.service';
+import { auth0Config } from '../../auth0.config';
 
 @Component({
   selector: 'app-profile',
@@ -17,6 +18,9 @@ import { MarketingService } from '../marketing.service';
           <h3>{{ u.name }}</h3>
           <p>{{ u.email }}
             <span class="tag">{{ u.email_verified ? 'Verified' : 'Unverified' }}</span></p>
+          @if (customerId(); as id) {
+            <p class="muted">Customer ID: <code>{{ id }}</code></p>
+          }
           @if (marketing.optedIn()) {
             <p class="muted">Member of the Pizza 42 Dough Club 🍕</p>
           }
@@ -42,4 +46,7 @@ import { MarketingService } from '../marketing.service';
 export class ProfileComponent {
   user = toSignal(inject(AuthService).user$);
   marketing = inject(MarketingService);
+
+  /** The unique customer ID added to the ID token by the Auth0 "Add Customer ID" Action. */
+  customerId = computed<string | null>(() => this.user()?.[auth0Config.claimsNamespace + 'customer_id'] ?? null);
 }
