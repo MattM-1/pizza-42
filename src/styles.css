@@ -87,3 +87,12 @@ footer p { margin: .2rem 0; }
 .error { background: #fde8e6; color: #8a1c10; border: 1px solid #f3b7b0; padding: .6rem .8rem; border-radius: 10px; margin: .75rem 0 0; font-size: .92rem; }
 
 .stepup { background: #fff7e6; color: #3d2a05; border: 1px solid #f0c36d; border-radius: 8px; padding: .6rem .8rem; font-size: .9rem; margin: .75rem 0; }
+
+.receipt { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; margin-top: 1rem; font-size: .92rem; }
+.receipt p { margin: .15rem 0 .5rem; }
+.receipt hr { border: 0; border-top: 1px dashed var(--line); margin: .6rem 0; }
+.orders { display: grid; gap: 1rem; max-width: 560px; }
+.orders .receipt { margin-top: 0; }
+/* Sans-serif here: the serif body font draws a 0 that looks like the letter o (as in "Auth0"). */
+.customer-id { max-width: 560px; margin-bottom: 1.25rem; font-family: 'Trebuchet MS', system-ui, sans-serif; }
+.customer-id p { margin: .15rem 0; }

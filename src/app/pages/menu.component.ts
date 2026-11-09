@@ -7,6 +7,8 @@ import { AuthService } from '@auth0/auth0-angular';
 import { MARKETING_DISCOUNT, MarketingService } from '../marketing.service';
 import { CartService, MENU, Pizza, SIZE_LABEL, Size } from '../cart.service';
 import { auth0Config } from '../../auth0.config';
+import { Order } from '../order.model';
+import { OrderReceiptComponent } from '../order-receipt.component';
 
 const MFA_ACR = 'http://schemas.openid.net/pape/policies/2007/06/multi-factor'; // must match the Auth0 Action
 const STEP_UP_THRESHOLD = 100; // dollars; keep in sync with the API (orders strictly over this need step-up)
@@ -14,7 +16,7 @@ const STEP_UP_THRESHOLD = 100; // dollars; keep in sync with the API (orders str
 @Component({
   selector: 'app-menu',
   standalone: true,
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, OrderReceiptComponent],
   template: `
     @if (isAuthenticated() && !emailVerified()) {
       <div class="verify" role="alert">
@@ -55,7 +57,7 @@ const STEP_UP_THRESHOLD = 100; // dollars; keep in sync with the API (orders str
 
       <aside class="cart">
         <h3>Your order</h3>
-        @if (placed()) {
+        @if (receipt()) {
           <p class="success">🎉 Order placed! Your pizza is on its way (in spirit).</p>
         }
         @if (cart.lines().length === 0) {
@@ -89,6 +91,9 @@ const STEP_UP_THRESHOLD = 100; // dollars; keep in sync with the API (orders str
             {{ ordering() ? 'Placing order…' : !isAuthenticated() ? 'Log in to order' : !emailVerified() ? 'Verify email to order' : 'Place order' }}
           </button>
         }
+        @if (receipt(); as r) {
+          <app-order-receipt [order]="r" />
+        }
       </aside>
     </div>
   `,
@@ -111,7 +116,7 @@ export class MenuComponent {
   menu = MENU;
   sizes: Size[] = ['S', 'M', 'L'];
   labels = SIZE_LABEL;
-  placed = signal(false);
+  receipt = signal<Order | null>(null);
   ordering = signal(false);
   orderError = signal('');
   private chosen = signal<Record<string, Size>>({});
@@ -142,15 +147,15 @@ export class MenuComponent {
     // Email verification gate: browsing is open, ordering requires a verified email.
     if (!this.emailVerified()) return;
 
-    this.placed.set(false);
+    this.receipt.set(null);
     this.orderError.set('');
     this.ordering.set(true);
     try {
       // The auth interceptor adds the access token. The API prices the order itself.
       const items = this.cart.lines().map((l) => ({ pizzaId: l.pizza.id, size: l.size, qty: l.qty }));
-      await firstValueFrom(this.http.post(`${auth0Config.apiUrl}/orders`, { items }));
+      const order = await firstValueFrom(this.http.post<Order>(`${auth0Config.apiUrl}/orders`, { items }));
       this.cart.clear();
-      this.placed.set(true);
+      this.receipt.set(order);
     } catch (err) {
       // Orders over $100 are rejected until the user completes step-up MFA. Start a new authorize request
       // with acr_values; the Auth0 Action challenges the user and the new token carries create:large-orders.

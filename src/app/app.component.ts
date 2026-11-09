@@ -15,6 +15,7 @@ import { MARKETING_DISCOUNT, MarketingService } from './marketing.service';
       <nav>
         <a routerLink="/menu" routerLinkActive="active">Menu</a>
         @if (isAuthenticated()) {
+          <a routerLink="/orders" routerLinkActive="active">My Orders</a>
           <a routerLink="/profile" routerLinkActive="active">My Account</a>
         }
       </nav>
