@@ -26,7 +26,7 @@ import { OrderReceiptComponent } from '../order-receipt.component';
       <p class="muted">No orders yet.</p>
     } @else {
       <div class="orders">
-        @for (o of orders()!; track o.id) {
+        @for (o of orders()!; track o.orderId) {
           <app-order-receipt [order]="o" />
         }
       </div>

@@ -10,7 +10,7 @@ import { Order } from './order.model';
   template: `
     <article class="receipt" aria-label="Order receipt">
       <div class="row between">
-        <strong>Order #{{ order().id.slice(0, 8) }}</strong>
+        <strong>Order #{{ order().orderId.slice(0, 8) }}</strong>
         <span class="tag">{{ order().status }}</span>
       </div>
       <p class="muted">{{ order().createdAt | date: 'medium' }}</p>

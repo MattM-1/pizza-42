@@ -9,7 +9,8 @@ export interface OrderLine {
 }
 
 export interface Order {
-  id: string;
+  orderId: string;
+  customerId: string;
   status: string;
   createdAt: string;
   lines: OrderLine[];
